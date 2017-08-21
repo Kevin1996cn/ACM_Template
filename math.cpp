@@ -12,10 +12,19 @@ const LL MAXN=10010;
 
 // 乘积取模
 // Verified!
-LL mulMod(LL a,LL b,LL n)
+LL mulMod(LL a,LL b,LL mod)
 {
-    return a*b%n;
+    LL ret=0;
+    while(b)
+    {
+        ret=(ret+(b%2*a)) % mod;
+        a=a*2%mod;
+        b=b/2;
+    }
+    return ret%mod;
 }
+
+
 
 // 快速幂
 // 求x^n%mod
