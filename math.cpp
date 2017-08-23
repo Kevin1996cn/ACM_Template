@@ -64,13 +64,21 @@ void getPrime()
 
 
 
-// 求最大公约数
+// 求最大公约数和最小公倍数
 // Verified!
 LL gcd(LL a,LL b)
 {
     if(b==0) return a;
     return gcd(b,a%b);
 }
+LL lcm(LL a,LL b)
+{
+    if(a==0 || b==0) return 0;
+    return a/gcd(a,b)*b;
+}
+
+
+
 
 
 // 拓展欧几里得算法
@@ -148,22 +156,28 @@ LL inv(LL a,LL m)
 }
 
 
+
+
 // 求解同余方程组
 // 返回一个<b,m>的数对
-pair<int,int> linearCongruence(const vector<int> &A,const vector<int> &B,
-                               const vector<int> &M)
+// 返回的结果是取余所有m的最小公倍数的结果
+// Verified!
+pair<LL,LL> linearCongruence(const vector<LL> &A,const vector<LL> &B,
+                               const vector<LL> &M)
 {
-    int x=0,m=1;
+    LL x=0,m=1;
     for(unsigned int i=0;i<A.size();i++)
     {
-        int a=A[i]*m,b=B[i]-A[i]*x,d=gcd(M[i],a);
+        LL a=A[i]*m,b=B[i]-A[i]*x,d=gcd(M[i],a);
         if(b%d!=0) return make_pair(0,-1); //无解
-        int t=b/d*modInverse(a/d,M[i]/d) % (M[i]/d);
-        x=x+m*t;
-        m*=M[i]/d;
+        LL t=b/d*modInverse(a/d,M[i]/d) % (M[i]/d);
+        x=(x+mulMod(m,t,lcm(m,M[i])))%lcm(m,M[i]);
+        m=lcm(m,M[i]);
     }
-    return make_pair(x%m,m);
+    return make_pair((x%m+m)%m,m);
 }
+
+
 
 
 // 离散对数
@@ -205,7 +219,9 @@ int BSGS(int a,int b,int n)
 
 // Lucas定理
 // 求C(n,m)%p
+// n,m<=1e18, p<=1e5
 // O(lognlogn)
+// Verified!
 int fact[MAXN];//需预处理ｎ! mod p的表
 LL Lucas(LL n,LL m,LL p)  
 {  
